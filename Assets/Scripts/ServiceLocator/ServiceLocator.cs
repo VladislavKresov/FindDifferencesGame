@@ -17,16 +17,16 @@ public class ServiceLocator : MonoBehaviour {
     private static Dictionary<string, IService> _services = new Dictionary<string, IService>();
 
     public void RegisterService<T>(T service) where T : IService {
-        string key = nameof(T);
+        string key = typeof(T).Name;
         if(_services.ContainsKey(key)) {
-            Debug.LogError("Attempted to register alredy registered service");
+            Debug.LogError($"Attempted to register alredy registered service {key}");
             return;
         }
         _services.Add(key, service);
     }
 
     public void UnregisterService<T>(T service) where T : IService {
-        string key = nameof(T);
+        string key = typeof(T).Name;
         if (!_services.ContainsKey(key)) {
             Debug.LogError("Attempted to unregister not registered service");
             return;
@@ -35,7 +35,7 @@ public class ServiceLocator : MonoBehaviour {
     }
 
     public T Get<T>() where T : IService {
-        string key = nameof(T);
+        string key = typeof(T).Name;
         if (!_services.ContainsKey(key)) {
             Debug.LogError($"{key} is not registered");
             throw new InvalidOperationException();
