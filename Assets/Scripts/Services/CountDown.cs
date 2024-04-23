@@ -3,12 +3,21 @@ using System.Collections;
 using UnityEngine;
 
 public class CountDown : MonoBehaviour, IService {
-    public Action<float> TimerTick;
-    public Action TimeLeft;
-
     private Coroutine _coroutine;
+    private float _timeLimit;
     private float _millisecondsLeft;
     public float MillisecondsLeft => _millisecondsLeft;
+
+    private void Start() {
+        ServiceLocator.Instance.Get<EventBus>().Subscribe<LevelStartSignal>(OnLevelStart);
+    }
+
+    private void OnLevelStart(LevelStartSignal signal) {
+        _timeLimit = signal.TimeLimit;
+        ResetTimer();
+        AddTime(_timeLimit);
+        StartTimer();
+    }
 
     public void AddTime(float milliseconds) {
         _millisecondsLeft += milliseconds;
@@ -30,11 +39,11 @@ public class CountDown : MonoBehaviour, IService {
 
     private IEnumerator StartCountDown() {
         while (_millisecondsLeft > 0) {
-            _millisecondsLeft -= Time.deltaTime;
-            TimerTick?.Invoke(_millisecondsLeft);
+            _millisecondsLeft -= Time.deltaTime * 1000;
+            ServiceLocator.Instance.Get<EventBus>().Invoke(new CountDownTickSignal(Time.deltaTime * 1000, _timeLimit, _millisecondsLeft));
             yield return null;
         }
         ResetTimer();
-        TimeLeft?.Invoke();
+        ServiceLocator.Instance.Get<EventBus>().Invoke(new TimeIsLeftSignal(_timeLimit));
     }
 }

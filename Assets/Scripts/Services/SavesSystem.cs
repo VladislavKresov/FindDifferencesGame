@@ -4,6 +4,7 @@ using UnityEngine;
 public class SavesSystem : MonoBehaviour, IService {
     private string _path;
     private SavesModel _savesData;
+    public SavesModel SavesData => _savesData;
 
     private void Awake() {
         _path = $"{Application.persistentDataPath}/saves.json";

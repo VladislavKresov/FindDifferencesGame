@@ -14,6 +14,8 @@ public class ServiceLocator : MonoBehaviour {
         }
     }
 
+    public static bool IsAlive => _instance != null;
+
     private static Dictionary<string, IService> _services = new Dictionary<string, IService>();
 
     public void RegisterService<T>(T service) where T : IService {
@@ -41,5 +43,9 @@ public class ServiceLocator : MonoBehaviour {
             throw new InvalidOperationException();
         }
         return (T)_services[key];
+    }
+
+    private void OnDestroy() {
+        _instance = null;
     }
 }

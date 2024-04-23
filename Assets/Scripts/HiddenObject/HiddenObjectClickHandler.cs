@@ -5,6 +5,6 @@ using UnityEngine.EventSystems;
 
 public class HiddenObjectClickHandler : MonoBehaviour, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
-        Debug.Log(gameObject.name);
+        ServiceLocator.Instance.Get<EventBus>().Invoke(new HiddenObjectClickSignal(gameObject));
     }
 }
