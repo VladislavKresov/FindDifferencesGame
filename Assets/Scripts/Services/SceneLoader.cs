@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SceneLoader : MonoBehaviour, IService {
@@ -22,5 +20,9 @@ public class SceneLoader : MonoBehaviour, IService {
 
     public void LoadScene(string name) {
         UnityEngine.SceneManagement.SceneManager.LoadScene(name);
+    }
+
+    public AsyncOperation LoadSceneAsync(SceneType sceneType) {
+        return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GetSceneName(sceneType));
     }
 }

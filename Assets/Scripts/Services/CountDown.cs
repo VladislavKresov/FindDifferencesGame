@@ -10,6 +10,8 @@ public class CountDown : MonoBehaviour, IService {
 
     private void Start() {
         ServiceLocator.Instance.Get<EventBus>().Subscribe<LevelStartSignal>(OnLevelStart);
+        ServiceLocator.Instance.Get<EventBus>().Subscribe<GamePauseSignal>((signal)=>StopTimer());
+        ServiceLocator.Instance.Get<EventBus>().Subscribe<GameResumeSignal>((signal)=>StartTimer());
     }
 
     private void OnLevelStart(LevelStartSignal signal) {
@@ -45,5 +47,13 @@ public class CountDown : MonoBehaviour, IService {
         }
         ResetTimer();
         ServiceLocator.Instance.Get<EventBus>().Invoke(new TimeIsLeftSignal(_timeLimit));
+    }
+
+    private void OnDestroy() {
+        if (ServiceLocator.IsAlive) {
+            ServiceLocator.Instance.Get<EventBus>().Unsubscribe<LevelStartSignal>(OnLevelStart);
+            ServiceLocator.Instance.Get<EventBus>().Unsubscribe<GamePauseSignal>((signal) => StopTimer());
+            ServiceLocator.Instance.Get<EventBus>().Unsubscribe<GameResumeSignal>((signal) => StartTimer());
+        }
     }
 }

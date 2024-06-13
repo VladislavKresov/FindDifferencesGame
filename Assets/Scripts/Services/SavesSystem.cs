@@ -6,9 +6,15 @@ public class SavesSystem : MonoBehaviour, IService {
     private SavesModel _savesData;
     public SavesModel SavesData => _savesData;
 
-    private void Awake() {
+    private void Start() {
         _path = $"{Application.persistentDataPath}/saves.json";
         ReadSaves();
+        ServiceLocator.Instance.Get<EventBus>().Subscribe<NewLevelReachedSignal>(OnNewLevelReached);
+    }
+
+    private void OnNewLevelReached(NewLevelReachedSignal signal) {
+        _savesData.Level = signal.Level;
+        WriteSaves();
     }
 
     public void ReadSaves() {

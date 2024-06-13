@@ -34,4 +34,8 @@ public class EventBus : MonoBehaviour, IService {
             }
         }
     }
+
+    internal void Subscribe<T>() {
+        throw new NotImplementedException();
+    }
 }

@@ -2,15 +2,14 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class AdressableLevelLoader : MonoBehaviour, IService {
-    public AssetReferenceGameObject[] LevelAssets;
-
-    public void LoadLevel(int level) {
-        if (level < 0 || LevelAssets.Length <= level) {
-            Debug.LogError($"Attempted to load unregistered level '{level}'");
-            return;
+public class AddressableLevelLoader : MonoBehaviour, IService {
+    public void LoadLevel(AssetReferenceGameObject level) {
+        if (level.OperationHandle.IsValid()) {
+            ServiceLocator.Instance.Get<EventBus>().Invoke(new LevelPrefabLoadedSignal(level.OperationHandle.Convert<GameObject>().Result));
         }
-        LevelAssets[level].LoadAssetAsync().Completed += OnAddressableLoaded;
+        else {
+            level.LoadAssetAsync().Completed += OnAddressableLoaded;
+        }
     }
 
     private void OnAddressableLoaded(AsyncOperationHandle<GameObject> handle) {

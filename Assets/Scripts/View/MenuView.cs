@@ -7,7 +7,8 @@ public class MenuView : MonoBehaviour {
     [SerializeField] private Button _playBTN;
 
     private void Start() {
-        _labelText.text = $"Start Game\nlevel {ServiceLocator.Instance.Get<SavesSystem>().SavesData.Level}";
-        _playBTN.onClick.AddListener(()=>ServiceLocator.Instance.Get<SceneLoader>().LoadScene(SceneLoader.SceneType.Game));
+        int currentLevel = ServiceLocator.Instance.Get<SavesSystem>().SavesData.Level;
+        _labelText.text = $"Start Game\nlevel {currentLevel}";
+        _playBTN.onClick.AddListener(()=>ServiceLocator.Instance.Get<LevelController>().LoadLevel(currentLevel));
     }
 }
